@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Tevdoski Art – Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  .phone {
+    width: 375px;
+    height: 812px;
+    background: #0a0a0a;
+    border-radius: 50px;
+    border: 2px solid #222;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 60px rgba(255,255,255,0.05);
+  }
+
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 28px 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    height: calc(812px - 44px);
+    padding: 0 28px;
+    position: relative;
+  }
+  .screen.active { display: flex; }
+
+  /* RAINBOW */
+  .rainbow { background: linear-gradient(90deg,#E53935,#FB8C00,#FDD835,#43A047,#00ACC1,#1E88E5,#8E24AA); }
+  .rainbow-text {
+    background: linear-gradient(90deg,#E53935,#FB8C00,#FDD835,#43A047,#00ACC1,#1E88E5,#8E24AA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .rainbow-bar { height: 3px; width: 60px; border-radius: 2px; margin: 8px auto 0; }
+
+  /* SCREEN 1 — WELCOME */
+  #s1 { justify-content: center; gap: 0; }
+  .logo-box {
+    width: 100px; height: 100px;
+    border-radius: 24px;
+    background: #111;
+    border: 1.5px solid #333;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+    font-size: 40px;
+  }
+  .app-name {
+    font-size: 26px; font-weight: 900; letter-spacing: 3px;
+    text-transform: uppercase; color: #fff; text-align: center;
+  }
+  .app-sub {
+    font-size: 11px; letter-spacing: 2px; color: #666;
+    text-transform: uppercase; margin-top: 6px; text-align: center;
+  }
+  .divider { width: 100%; height: 1px; background: #1a1a1a; margin: 36px 0; }
+  .btn-tiktok {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    background: #fff;
+    color: #000;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin-bottom: 12px;
+  }
+  .btn-tiktok:active { opacity: 0.85; }
+  .tiktok-icon {
+    width: 22px; height: 22px;
+    background: #000;
+    border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .terms-note { font-size: 10px; color: #444; text-align: center; line-height: 1.6; margin-top: 8px; }
+  .terms-note a { color: #666; }
+
+  /* SCREEN 2 — TIKTOK AUTH */
+  #s2 { justify-content: flex-start; padding-top: 24px; }
+  .auth-header {
+    width: 100%; text-align: center; margin-bottom: 32px;
+  }
+  .auth-header img { width: 48px; }
+  .auth-title { font-size: 18px; font-weight: 700; color: #fff; margin-top: 12px; }
+  .auth-sub { font-size: 12px; color: #666; margin-top: 6px; line-height: 1.5; }
+  .permission-box {
+    width: 100%;
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .permission-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #555; text-transform: uppercase; margin-bottom: 14px; }
+  .permission-item {
+    display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px;
+  }
+  .permission-item:last-child { margin-bottom: 0; }
+  .perm-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .perm-icon.green { background: rgba(67,160,71,0.15); }
+  .perm-icon.blue { background: rgba(30,136,229,0.15); }
+  .perm-text { flex: 1; }
+  .perm-text strong { font-size: 13px; color: #fff; display: block; margin-bottom: 2px; }
+  .perm-text span { font-size: 11px; color: #555; line-height: 1.4; }
+  .btn-authorize {
+    width: 100%; padding: 16px; border-radius: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px; font-weight: 700; letter-spacing: 1px;
+    border: none; cursor: pointer; margin-top: 8px;
+  }
+  .btn-authorize.primary { background: linear-gradient(90deg,#E53935,#FB8C00,#FDD835,#43A047,#00ACC1,#1E88E5,#8E24AA); color: #fff; }
+  .btn-authorize.secondary { background: #111; color: #555; border: 1px solid #222; margin-top: 10px; }
+
+  /* SCREEN 3 — SELECT VIDEO */
+  #s3 { justify-content: flex-start; padding-top: 20px; }
+  .screen-header {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .screen-title { font-size: 18px; font-weight: 900; color: #fff; letter-spacing: 1px; }
+  .badge {
+    font-size: 10px; font-weight: 700; letter-spacing: 1px;
+    padding: 4px 10px; border-radius: 20px;
+    background: rgba(67,160,71,0.15); color: #43A047;
+  }
+  .video-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 3px; width: 100%; margin-bottom: 20px;
+  }
+  .video-thumb {
+    aspect-ratio: 9/16;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background: #111;
+    border: 1px solid #1a1a1a;
+  }
+  .video-thumb.selected { border: 2.5px solid #43A047; }
+  .video-thumb .overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.7) 100%);
+    display: flex; align-items: flex-end; padding: 6px;
+  }
+  .video-thumb .duration {
+    font-size: 9px; font-weight: 700; color: #fff; letter-spacing: 0.5px;
+  }
+  .video-thumb .check {
+    position: absolute; top: 6px; right: 6px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #43A047; display: none;
+    align-items: center; justify-content: center; font-size: 10px;
+  }
+  .video-thumb.selected .check { display: flex; }
+  .color-1 { background: linear-gradient(135deg, #1a1a2e, #16213e); }
+  .color-2 { background: linear-gradient(135deg, #0f3460, #533483); }
+  .color-3 { background: linear-gradient(135deg, #1b1b2f, #2e4057); }
+  .color-4 { background: linear-gradient(135deg, #162447, #1f4068); }
+  .color-5 { background: linear-gradient(135deg, #1a1a1a, #2d2d2d); }
+  .color-6 { background: linear-gradient(135deg, #0d0d0d, #1a0a2e); }
+  .paint-emoji { font-size: 28px; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-60%); }
+  .btn-post {
+    width: 100%; padding: 16px; border-radius: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px; font-weight: 700; letter-spacing: 1px;
+    border: none; cursor: pointer;
+    background: linear-gradient(90deg,#E53935,#FB8C00,#FDD835,#43A047,#00ACC1,#1E88E5,#8E24AA);
+    color: #fff;
+  }
+
+  /* SCREEN 4 — SUCCESS */
+  #s4 { justify-content: center; }
+  .success-icon {
+    width: 100px; height: 100px; border-radius: 50%;
+    background: rgba(67,160,71,0.15);
+    border: 2px solid rgba(67,160,71,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px; margin-bottom: 24px;
+    animation: pop 0.4s ease;
+  }
+  @keyframes pop {
+    0% { transform: scale(0); opacity: 0; }
+    80% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .success-title { font-size: 24px; font-weight: 900; color: #fff; text-align: center; margin-bottom: 8px; }
+  .success-sub { font-size: 13px; color: #555; text-align: center; line-height: 1.6; margin-bottom: 32px; }
+  .tiktok-preview {
+    width: 100%; background: #111;
+    border: 1px solid #222; border-radius: 16px; padding: 16px;
+    display: flex; gap: 12px; align-items: center; margin-bottom: 32px;
+  }
+  .tt-thumb {
+    width: 48px; height: 64px; border-radius: 8px;
+    background: linear-gradient(135deg, #1a1a2e, #533483);
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
+    flex-shrink: 0;
+  }
+  .tt-info { flex: 1; }
+  .tt-handle { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .tt-caption { font-size: 11px; color: #555; line-height: 1.4; }
+  .tt-stats { display: flex; gap: 12px; margin-top: 8px; }
+  .tt-stat { font-size: 10px; color: #444; }
+  .btn-done {
+    width: 100%; padding: 16px; border-radius: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px; font-weight: 700; letter-spacing: 1px;
+    border: 1px solid #222; background: #111; color: #fff; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="status-bar">
+    <span>9:41</span>
+    <span>●●●●● WiFi 🔋</span>
+  </div>
+
+  <!-- SCREEN 1: WELCOME -->
+  <div class="screen active" id="s1">
+    <div class="logo-box">🎨</div>
+    <div class="app-name">Tevdoski <span class="rainbow-text">Art</span></div>
+    <div class="app-sub">Painting & Decoration · Skopje</div>
+    <div class="rainbow-bar rainbow"></div>
+    <div class="divider"></div>
+    <button class="btn-tiktok" onclick="go(2)">
+      <div class="tiktok-icon">♪</div>
+      Connect with TikTok
+    </button>
+    <p class="terms-note">By continuing you agree to our<br/>
+      <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+    </p>
+  </div>
+
+  <!-- SCREEN 2: TIKTOK AUTH -->
+  <div class="screen" id="s2">
+    <div class="auth-header">
+      <div style="font-size:36px;">♪</div>
+      <div class="auth-title">Authorize Tevdoski Art</div>
+      <div class="auth-sub">Tevdoski Art is requesting<br/>access to your TikTok account</div>
+    </div>
+    <div class="permission-box">
+      <div class="permission-title">This app will be able to:</div>
+      <div class="permission-item">
+        <div class="perm-icon green">📤</div>
+        <div class="perm-text">
+          <strong>Publish Videos</strong>
+          <span>Post painting and decoration videos directly to your TikTok profile</span>
+        </div>
+      </div>
+      <div class="permission-item">
+        <div class="perm-icon blue">👤</div>
+        <div class="perm-text">
+          <strong>View Profile Info</strong>
+          <span>Access your public username and profile picture</span>
+        </div>
+      </div>
+    </div>
+    <button class="btn-authorize primary" onclick="go(3)">Authorize & Continue</button>
+    <button class="btn-authorize secondary" onclick="go(1)">Cancel</button>
+  </div>
+
+  <!-- SCREEN 3: SELECT VIDEO -->
+  <div class="screen" id="s3">
+    <div class="screen-header">
+      <div class="screen-title">Select Video</div>
+      <div class="badge">✓ TikTok Connected</div>
+    </div>
+    <div class="video-grid">
+      <div class="video-thumb color-1 selected" onclick="selectVideo(this)">
+        <span class="paint-emoji">🖌️</span>
+        <div class="overlay"><span class="duration">0:32</span></div>
+        <div class="check">✓</div>
+      </div>
+      <div class="video-thumb color-2" onclick="selectVideo(this)">
+        <span class="paint-emoji">🏠</span>
+        <div class="overlay"><span class="duration">0:58</span></div>
+        <div class="check">✓</div>
+      </div>
+      <div class="video-thumb color-3" onclick="selectVideo(this)">
+        <span class="paint-emoji">🎨</span>
+        <div class="overlay"><span class="duration">1:04</span></div>
+        <div class="check">✓</div>
+      </div>
+      <div class="video-thumb color-4" onclick="selectVideo(this)">
+        <span class="paint-emoji">🖼️</span>
+        <div class="overlay"><span class="duration">0:45</span></div>
+        <div class="check">✓</div>
+      </div>
+      <div class="video-thumb color-5" onclick="selectVideo(this)">
+        <span class="paint-emoji">✨</span>
+        <div class="overlay"><span class="duration">0:28</span></div>
+        <div class="check">✓</div>
+      </div>
+      <div class="video-thumb color-6" onclick="selectVideo(this)">
+        <span class="paint-emoji">🌈</span>
+        <div class="overlay"><span class="duration">0:51</span></div>
+        <div class="check">✓</div>
+      </div>
+    </div>
+    <button class="btn-post" onclick="go(4)">Post to TikTok →</button>
+  </div>
+
+  <!-- SCREEN 4: SUCCESS -->
+  <div class="screen" id="s4">
+    <div class="success-icon">✓</div>
+    <div class="success-title">Posted to TikTok!</div>
+    <div class="success-sub">Your painting video has been<br/>successfully published to TikTok.</div>
+    <div class="tiktok-preview">
+      <div class="tt-thumb">🖌️</div>
+      <div class="tt-info">
+        <div class="tt-handle">@tevdoskiart</div>
+        <div class="tt-caption">Interior painting transformation – Skopje ✨ #painting #decor #tevdoskiart</div>
+        <div class="tt-stats">
+          <span class="tt-stat">Just now</span>
+          <span class="tt-stat">· Processing...</span>
+        </div>
+      </div>
+    </div>
+    <button class="btn-done" onclick="go(1)">Done</button>
+  </div>
+</div>
+
+<script>
+  function go(n) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('s' + n).classList.add('active');
+  }
+  function selectVideo(el) {
+    document.querySelectorAll('.video-thumb').forEach(v => v.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+</script>
+</body>
+</html>
